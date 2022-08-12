@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomSignal Version="1.0" NavMsg="False">
+    <Constellation>Galileo</Constellation>
+    <CentralFreq>1575420000</CentralFreq>
+    <Bandwidth>20000000</Bandwidth>
+    <ModulationCoef Real="-0.707106781" Imag="0" />
+    <DLLPath>./custom_e1</DLLPath>
+    <Codes>
+        <Code Id="E1C"/>
+    </Codes>  
+    <Subcarriers>
+        <Subcarrier Id="subcarrier1" Rate="1023000">
+            <Coef>0.953462589|-0.953462589</Coef>
+        </Subcarrier>
+        <Subcarrier Id="subcarrier2" Rate="6138000">
+            <Coef>0.301511345|-0.301511345</Coef>
+        </Subcarrier>
+    </Subcarriers>
+</CustomSignal>
