@@ -13,7 +13,7 @@
             <Coef>0.953462589|-0.953462589</Coef>
         </Subcarrier>
         <Subcarrier Id="subcarrier2" Rate="6138000">
-            <Coef>0.301511345|-0.301511345</Coef>
+            <Coef>-0.301511345|0.301511345</Coef>
         </Subcarrier>
     </Subcarriers>
 </CustomSignal>
