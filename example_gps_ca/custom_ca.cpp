@@ -3,7 +3,7 @@
 #include <iostream>
 
 #ifndef DOWNLINK_PATH
-# define DOWNLINK_PATH "./downlink.csv"
+# define DOWNLINK_PATH "./custom_ca_downlink.csv"
 #endif
 
 CAData::CAData(const CSInitData& data)
