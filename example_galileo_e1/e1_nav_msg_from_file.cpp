@@ -78,11 +78,11 @@ static bool parseLine(const std::string& line, int64_t& out_timestamp, uint32_t&
 {
   std::vector<std::string> values = split(line, ",");
 
-  if (values.size() < 7)
+  if (values.size() < 8)
     return false;
   out_timestamp = toInt64(values[0]);
-  out_prn = static_cast<int32_t>(toInt64(values[1]));
-  out_bits = values[6];
+  out_prn = static_cast<int32_t>(toInt64(values[2]));
+  out_bits = values[7];
   return true;
 }
 
