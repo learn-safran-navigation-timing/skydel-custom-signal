@@ -1,9 +1,11 @@
-#pragma once
+#ifndef CUSTOM_E1_H
+#define CUSTOM_E1_H
 
-#include "e1_code.h"
-#include "custom_signal_interface.h"
-#include "e1_nav_msg_from_file.h"
 #include <fstream>
+
+#include "../common/custom_signal_nav_msg_from_file.h"
+#include "../custom_signal_interface.h"
+#include "e1_code.h"
 
 class E1Data
 {
@@ -14,8 +16,9 @@ public:
   const uint32_t startSecondOfWeek;
 
   E1Code code;
-  E1NavMsgFromFile navMsg;
+  CustomSignalNavMsgFromFile navMsg;
 
+  std::ofstream out;
 };
 
 class CustomE1NavMsg : public ICustomSignalNavMsg
@@ -25,7 +28,7 @@ public:
 
   uint32_t getNavMsgDurationMs() override;
   int32_t getTOWOffset() override;
-  void buildNavMsg(int64_t elapsedTime, uint32_t prn, const CSConstellation &data) override;
+  void buildNavMsg(int64_t elapsedTime, uint32_t prn, const CSConstellation& data) override;
 
 private:
   E1Data& m_data;
@@ -61,8 +64,9 @@ class CustomE1 : public ICustomSignal
 {
 public:
   CustomE1(const CSInitData& data);
+  ~CustomE1();
 
-  ICustomSignalNavMsg *getNavMsg() override;
+  ICustomSignalNavMsg* getNavMsg() override;
   ICustomSignalCode* getCode(const char* name) override;
 
 private:
@@ -71,3 +75,4 @@ private:
   CustomE1BCode m_e1bCode;
   CustomE1CCode m_e1cCode;
 };
+#endif // CUSTOM_E1_H

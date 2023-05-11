@@ -1,4 +1,5 @@
-#pragma once
+#ifndef CUSTOM_SIGNAL_INTERFACE_H
+#define CUSTOM_SIGNAL_INTERFACE_H
 
 #include <cstdint>
 #include "custom_signal_data.h"
@@ -64,6 +65,7 @@ public:
   virtual ICustomSignalCode* getCode(const char* name) = 0;
 };
 
+#ifndef IS_STATIC
 #define DEFINE_CUSTOM_SIGNAL(className) \
 extern "C" \
 { \
@@ -71,3 +73,8 @@ extern "C" \
   const uint32_t csInterfaceVersion = CS_INTERFACE_VERSION; \
   DLL_EXPORT ICustomSignal* createSignal(const CSInitData& data) { return new className(data); } \
 }
+#else
+#define DEFINE_CUSTOM_SIGNAL(className)
+#endif // IS_STATIC
+
+#endif // CUSTOM_SIGNAL_INTERFACE_H

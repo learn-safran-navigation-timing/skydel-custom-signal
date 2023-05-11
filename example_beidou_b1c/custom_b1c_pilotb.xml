@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomSignal Version="1.0" NavMsg="False">
+    <Constellation>BEIDOU</Constellation>
+    <CentralFreq>1575420000</CentralFreq>
+    <Bandwidth>25000000</Bandwidth>
+    <ModulationCoef Real="0.30151134457776363" Imag="0" />
+    <DLLPath>./custom_b1c</DLLPath>
+    <Codes>
+        <Code Id="B1CPilotB"/>
+    </Codes>
+    <Subcarriers>
+        <Subcarrier Id="subcarrier1" Rate="6138000">
+            <Coef>1|-1</Coef>
+        </Subcarrier>
+    </Subcarriers>
+</CustomSignal>

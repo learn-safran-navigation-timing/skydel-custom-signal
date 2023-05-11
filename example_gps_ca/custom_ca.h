@@ -1,9 +1,10 @@
 #pragma once
 
-#include "custom_signal_interface.h"
-#include "coarse_acquisition_code.h"
-#include "ca_nav_msg_from_file.h"
 #include <fstream>
+
+#include "../common/custom_signal_nav_msg_from_file.h"
+#include "../custom_signal_interface.h"
+#include "coarse_acquisition_code.h"
 
 class CAData
 {
@@ -14,7 +15,7 @@ public:
   const uint32_t startSecondOfWeek;
 
   const CoarseAcquisitionCode codes;
-  CANavMsgFromFile navMsg;
+  CustomSignalNavMsgFromFile navMsg;
 
   std::ofstream out;
 };
@@ -26,7 +27,7 @@ public:
 
   uint32_t getNavMsgDurationMs() override;
   int32_t getTOWOffset() override;
-  void buildNavMsg(int64_t elapsedTime, uint32_t prn, const CSConstellation &data) override;
+  void buildNavMsg(int64_t elapsedTime, uint32_t prn, const CSConstellation& data) override;
 
 private:
   CAData& m_data;
@@ -51,7 +52,7 @@ public:
   CustomCA(const CSInitData& data);
   ~CustomCA();
 
-  ICustomSignalNavMsg *getNavMsg() override;
+  ICustomSignalNavMsg* getNavMsg() override;
   ICustomSignalCode* getCode(const char* name) override;
 
 private:
