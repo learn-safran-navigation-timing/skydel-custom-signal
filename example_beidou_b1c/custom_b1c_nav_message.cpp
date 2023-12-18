@@ -7,6 +7,7 @@
 namespace
 {
 constexpr uint32_t NB_SVID_MAX = 63;
+constexpr uint32_t FIRST_PRN = 1;
 constexpr uint64_t MESSAGE_DURATION_MS = 18000;
 constexpr uint64_t BIT_COUNT = 1800;
 
@@ -34,7 +35,7 @@ std::shared_ptr<CustomSignalNavMsgFromFile> CustomB1CNavMsg::makeSharedB1CNavMsg
 {
   return std::make_shared<CustomSignalNavMsgFromFile>(
     downlinkPath,
-    std::make_unique<NavMessageBlock<NB_SVID_MAX, BIT_COUNT, MESSAGE_DURATION_MS>>(&setBits));
+    std::make_unique<NavMessageBlock<NB_SVID_MAX, FIRST_PRN, BIT_COUNT, MESSAGE_DURATION_MS>>(&setBits));
 }
 
 struct CustomB1CNavMsg::Pimpl

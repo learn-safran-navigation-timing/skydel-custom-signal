@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <CustomSignal Version="1.0" NavMsg="True">
-    <Constellation>GPS</Constellation>
+    <Constellation>QZSS</Constellation>
     <CentralFreq>1575420000</CentralFreq>
     <Bandwidth>2046000</Bandwidth>
     <ModulationCoef Real="0" Imag="1" />
-    <DLLPath>./custom_ca</DLLPath>
+    <DLLPath>./custom_qzss_ca</DLLPath>
     <Codes>
         <Code Id="L1CA"/>
     </Codes>

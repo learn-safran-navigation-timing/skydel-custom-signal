@@ -110,7 +110,8 @@ void CustomSignalNavMsgFromFile::parseBlock()
 
   do
   {
-    if (prn < 0 || prn > static_cast<int64_t>(m_navMsgBlock->getSvCount()))
+    if (prn < static_cast<int64_t>(m_navMsgBlock->firstPrn()) ||
+        prn > static_cast<int64_t>(m_navMsgBlock->getSvCount() + m_navMsgBlock->firstPrn()))
       throw std::runtime_error(buildString("Invalid PRN ", prn, " in downlink file."));
 
     m_navMsgBlock->update(timestamp, static_cast<uint32_t>(prn), bits);

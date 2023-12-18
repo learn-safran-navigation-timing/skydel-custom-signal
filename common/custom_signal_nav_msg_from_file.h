@@ -10,14 +10,16 @@
 class INavMessageBlock
 {
 public:
+  virtual ~INavMessageBlock() = default;
   virtual bool getBit(int64_t elapsed, uint32_t prn) const = 0;
   virtual uint64_t getSvCount() const = 0;
   virtual bool isValid(uint32_t prn) const = 0;
   virtual int64_t timestamp(uint32_t prn) const = 0;
   virtual void update(int64_t elapsed, uint32_t prn, const std::string& bits) = 0;
+  virtual uint64_t firstPrn() const = 0;
 };
 
-template<uint64_t SvCount, uint64_t BitCount, uint64_t MessageDurationMs>
+template<uint64_t SvCount, uint64_t FirstPrn, uint64_t BitCount, uint64_t MessageDurationMs>
 class NavMessageBlock : public INavMessageBlock
 {
 public:
@@ -27,21 +29,25 @@ public:
 
   bool getBit(int64_t elapsed, uint32_t prn) const override
   {
-    const auto& msg = m_msgs[prn - 1];
+    const auto& msg = m_msgs.at(idx(prn));
     return msg.bits[(elapsed - msg.timestamp) * BitCount / MessageDurationMs];
   }
 
   uint64_t getSvCount() const override { return SvCount; }
-  bool isValid(uint32_t prn) const override { return m_msgs[prn - 1].isValid; }
-  int64_t timestamp(uint32_t prn) const override { return m_msgs[prn - 1].timestamp; }
+  bool isValid(uint32_t prn) const override { return m_msgs.at(idx(prn)).isValid; }
+  int64_t timestamp(uint32_t prn) const override { return m_msgs.at(idx(prn)).timestamp; }
 
   void update(int64_t elapsed, uint32_t prn, const std::string& bits) override
   {
-    auto& msg = m_msgs[prn - 1];
+    auto& msg = m_msgs.at(idx(prn));
     msg.isValid = true;
     msg.timestamp = elapsed;
     m_setBitFunc(msg.bits, bits);
   }
+
+  uint64_t firstPrn() const override { return FirstPrn; };
+
+  uint32_t idx(uint32_t prn) const { return prn - FirstPrn; }
 
 private:
   struct Msg

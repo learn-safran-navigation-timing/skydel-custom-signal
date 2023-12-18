@@ -34,8 +34,7 @@ E1Data::E1Data(const CSInitData& data) :
   startWeek(data.startWeek),
   startSecondOfWeek(data.startSecondOfWeek),
   navMsg(std::string {data.pathToXml} + '/' + DOWNLINK_PATH,
-         std::make_unique<NavMessageBlock<36, 500, 2000>>(&setBits)),
-  out("custom_e1.log")
+         std::make_unique<NavMessageBlock<36, 1, 500, 2000>>(&setBits))
 {
 }
 
@@ -55,7 +54,6 @@ int32_t CustomE1NavMsg::getTOWOffset()
 
 void CustomE1NavMsg::buildNavMsg(int64_t elapsedTime, uint32_t prn, const CSConstellation& /*data*/)
 {
-  m_data.out << "buildNavMsg(" << elapsedTime << ", " << prn << ")\n";
   m_data.navMsg.prepare(elapsedTime, prn);
 }
 
@@ -112,23 +110,19 @@ CustomE1::CustomE1(const CSInitData& data) :
   m_e1bCode(m_data),
   m_e1cCode(m_data)
 {
-  m_data.out << "ctor(" << m_data.startWeek << ", " << m_data.startSecondOfWeek << ")\n";
 }
 
 CustomE1::~CustomE1()
 {
-  m_data.out << "dtor()\n";
 }
 
 ICustomSignalNavMsg* CustomE1::getNavMsg()
 {
-  m_data.out << "getNavMsg()\n";
   return &m_msg;
 }
 
 ICustomSignalCode* CustomE1::getCode(const char* name)
 {
-  m_data.out << "getCode(\"" << name << "\")\n";
   if (name == std::string {"E1B"})
     return &m_e1bCode;
   if (name == std::string {"E1C"})

@@ -2,7 +2,7 @@
 <CustomSignal Version="1.0" NavMsg="False">
     <Constellation>BEIDOU</Constellation>
     <CentralFreq>1575420000</CentralFreq>
-    <Bandwidth>25000000</Bandwidth>
+    <Bandwidth>1023000</Bandwidth>
     <ModulationCoef Real="0.30151134457776363" Imag="0" />
     <DLLPath>./custom_b1c</DLLPath>
     <Codes>
