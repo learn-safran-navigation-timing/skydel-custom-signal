@@ -13,4 +13,4 @@ target_include_directories(custom_tddm_ca_static PUBLIC ${CMAKE_CURRENT_SOURCE_D
 
 target_compile_definitions(custom_tddm_ca_static PRIVATE IS_STATIC)
 
-file(COPY custom_tddm_ca_downlink.csv custom_tddm_ca.xml DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY custom_tddm_ca_downlink.csv custom_tddm_ca.xml DESTINATION ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})

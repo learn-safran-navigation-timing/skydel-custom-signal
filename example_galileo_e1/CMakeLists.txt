@@ -13,4 +13,4 @@ target_include_directories(custom_e1_static PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_compile_definitions(custom_e1_static PRIVATE IS_STATIC)
 
-file(COPY custom_e1_downlink.csv custom_e1b.xml custom_e1c.xml DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+file(COPY custom_e1_downlink.csv custom_e1b.xml custom_e1c.xml DESTINATION ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
