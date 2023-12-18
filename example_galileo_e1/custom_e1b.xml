@@ -2,7 +2,7 @@
 <CustomSignal Version="1.0" NavMsg="True">
     <Constellation>Galileo</Constellation>
     <CentralFreq>1575420000</CentralFreq>
-    <Bandwidth>20000000</Bandwidth>
+    <Bandwidth>12107000</Bandwidth>
     <ModulationCoef Real="0.707106781" Imag="0" />
     <DLLPath>./custom_e1</DLLPath>
     <Codes>

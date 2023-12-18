@@ -31,8 +31,7 @@ CAData::CAData(const CSInitData& data) :
   startWeek(data.startWeek),
   startSecondOfWeek(data.startSecondOfWeek),
   navMsg(std::string {data.pathToXml} + '/' + DOWNLINK_PATH,
-         std::make_unique<NavMessageBlock<32, 300, 6000>>(&setBits)),
-  out("custom_ca.log")
+         std::make_unique<NavMessageBlock<32, 1, 300, 6000>>(&setBits))
 {
 }
 
@@ -52,7 +51,6 @@ int32_t CustomCANavMsg::getTOWOffset()
 
 void CustomCANavMsg::buildNavMsg(int64_t elapsedTime, uint32_t prn, const CSConstellation& /*data*/)
 {
-  m_data.out << "buildNavMsg(" << elapsedTime << ", " << prn << ")\n";
   m_data.navMsg.prepare(elapsedTime, prn);
 }
 
@@ -79,23 +77,19 @@ uint32_t CustomCACode::getExtraAllocSize()
 
 CustomCA::CustomCA(const CSInitData& data) : ICustomSignal(data), m_data(data), m_msg(m_data), m_code(m_data)
 {
-  m_data.out << "ctor(" << m_data.startWeek << ", " << m_data.startSecondOfWeek << ")\n";
 }
 
 CustomCA::~CustomCA()
 {
-  m_data.out << "dtor()\n";
 }
 
 ICustomSignalNavMsg* CustomCA::getNavMsg()
 {
-  m_data.out << "getNavMsg()\n";
   return &m_msg;
 }
 
 ICustomSignalCode* CustomCA::getCode(const char* name)
 {
-  m_data.out << "getCode(\"" << name << "\")\n";
   if (std::strcmp(name, "L1CA") == 0)
     return &m_code;
   return nullptr;

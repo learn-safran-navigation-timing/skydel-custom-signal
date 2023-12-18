@@ -2,12 +2,13 @@
 #define CUSTOM_SIGNAL_INTERFACE_H
 
 #include <cstdint>
+
 #include "custom_signal_data.h"
 
 #if _WIN32
-# define DLL_EXPORT __declspec(dllexport)
+#define DLL_EXPORT __declspec(dllexport)
 #else
-# define DLL_EXPORT __attribute__((visibility("default")))
+#define DLL_EXPORT __attribute__((visibility("default")))
 #endif
 
 #define CS_INTERFACE_VERSION 3
@@ -50,10 +51,10 @@ public:
 class ICustomSignal
 {
 public:
-/*
- * Your implementation should define a constructor like so:
- * MySignal(const CSInitData& data);
- */
+  /*
+   * Your implementation should define a constructor like so:
+   * MySignal(const CSInitData& data);
+   */
   ICustomSignal(const CSInitData&) {}
 
   virtual ~ICustomSignal() = default;
@@ -66,13 +67,13 @@ public:
 };
 
 #ifndef IS_STATIC
-#define DEFINE_CUSTOM_SIGNAL(className) \
-extern "C" \
-{ \
-  DLL_EXPORT extern const uint32_t csInterfaceVersion; \
-  const uint32_t csInterfaceVersion = CS_INTERFACE_VERSION; \
-  DLL_EXPORT ICustomSignal* createSignal(const CSInitData& data) { return new className(data); } \
-}
+#define DEFINE_CUSTOM_SIGNAL(className)                                                            \
+  extern "C"                                                                                       \
+  {                                                                                                \
+    DLL_EXPORT extern const uint32_t csInterfaceVersion;                                           \
+    const uint32_t csInterfaceVersion = CS_INTERFACE_VERSION;                                      \
+    DLL_EXPORT ICustomSignal* createSignal(const CSInitData& data) { return new className(data); } \
+  }
 #else
 #define DEFINE_CUSTOM_SIGNAL(className)
 #endif // IS_STATIC

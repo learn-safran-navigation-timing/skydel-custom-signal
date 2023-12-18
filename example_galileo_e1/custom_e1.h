@@ -17,8 +17,6 @@ public:
 
   E1Code code;
   CustomSignalNavMsgFromFile navMsg;
-
-  std::ofstream out;
 };
 
 class CustomE1NavMsg : public ICustomSignalNavMsg

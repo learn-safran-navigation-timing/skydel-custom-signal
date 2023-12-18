@@ -6,10 +6,10 @@
 #include "../common/custom_signal_nav_msg_from_file.h"
 #include "../custom_signal_interface.h"
 
-class CAData
+class TddmCAData
 {
 public:
-  CAData(const CSInitData& data);
+  TddmCAData(const CSInitData& data);
 
   const uint32_t startWeek;
   const uint32_t startSecondOfWeek;
@@ -18,43 +18,43 @@ public:
   CustomSignalNavMsgFromFile navMsg;
 };
 
-class CustomCANavMsg : public ICustomSignalNavMsg
+class CustomTddmCANavMsg : public ICustomSignalNavMsg
 {
 public:
-  CustomCANavMsg(CAData& data);
+  CustomTddmCANavMsg(TddmCAData& data);
 
   uint32_t getNavMsgDurationMs() override;
   int32_t getTOWOffset() override;
   void buildNavMsg(int64_t elapsedTime, uint32_t prn, const CSConstellation& data) override;
 
 private:
-  CAData& m_data;
+  TddmCAData& m_data;
 };
 
-class CustomCACode : public ICustomSignalCode
+class CustomTddmCACode : public ICustomSignalCode
 {
 public:
-  CustomCACode(CAData& data);
+  CustomTddmCACode(TddmCAData& data);
 
-  void getChips(int64_t elapsedTime, uint32_t prn, int8_t* chips) override;
+  void getChips(int64_t elapsedMs, uint32_t prn, int8_t* chips) override;
   uint32_t getNumberOfChipsPerMSec() override;
   uint32_t getExtraAllocSize() override;
 
 private:
-  CAData& m_data;
+  TddmCAData& m_data;
 };
 
-class CustomCA : public ICustomSignal
+class CustomTddmCA : public ICustomSignal
 {
 public:
-  CustomCA(const CSInitData& data);
-  ~CustomCA();
+  CustomTddmCA(const CSInitData& data);
+  ~CustomTddmCA();
 
   ICustomSignalNavMsg* getNavMsg() override;
   ICustomSignalCode* getCode(const char* name) override;
 
 private:
-  CAData m_data;
-  CustomCANavMsg m_msg;
-  CustomCACode m_code;
+  TddmCAData m_data;
+  CustomTddmCANavMsg m_msg;
+  CustomTddmCACode m_code;
 };

@@ -23,21 +23,23 @@ constexpr unsigned N_PRIMARY = 10243;
 
 constexpr unsigned N_SECONDARY = 3607;
 
-constexpr std::array<unsigned, NB_SVID_MAX> PHASE_DIFFERENCE_DATA = {2678, 4802, 958,  859,  3843, 2232, 124,  4352, 1816,
-                                                                 1126, 1860, 4800, 2267, 424,  4192, 4333, 2656, 4148,
-                                                                 243,  1330, 1593, 1470, 882,  3202, 5095, 2546, 1733,
-                                                                 4795, 4577, 1627, 3638, 2553, 3646, 1087, 1843, 216,
-                                                                 2245, 726,  1966, 670,  4130, 53,   4830, 182,  2181,
-                                                                 2006, 1080, 2288, 2027, 271,  915,  497,  139,  3693,
-                                                                 2054, 4342, 3342, 2592, 1007, 310,  4203, 455,  4318};
+constexpr std::array<unsigned, NB_SVID_MAX> PHASE_DIFFERENCE_DATA = {2678, 4802, 958,  859,  3843, 2232, 124,  4352,
+                                                                     1816, 1126, 1860, 4800, 2267, 424,  4192, 4333,
+                                                                     2656, 4148, 243,  1330, 1593, 1470, 882,  3202,
+                                                                     5095, 2546, 1733, 4795, 4577, 1627, 3638, 2553,
+                                                                     3646, 1087, 1843, 216,  2245, 726,  1966, 670,
+                                                                     4130, 53,   4830, 182,  2181, 2006, 1080, 2288,
+                                                                     2027, 271,  915,  497,  139,  3693, 2054, 4342,
+                                                                     3342, 2592, 1007, 310,  4203, 455,  4318};
 
-constexpr std::array<unsigned, NB_SVID_MAX> TRUNCATION_POINT_DATA = {699,  694,  7318, 2127, 715,  6682, 7850,  5495, 1162,
-                                                                 7682, 6792, 9973, 6596, 2092, 19,   10151, 6297, 5766,
-                                                                 2359, 7136, 1706, 2128, 6827, 693,  9729,  1620, 6805,
-                                                                 534,  712,  1929, 5355, 6139, 6339, 1470,  6867, 7851,
-                                                                 1162, 7659, 1156, 2672, 6043, 2862, 180,   2663, 6940,
-                                                                 1645, 1582, 951,  6878, 7701, 1823, 2391,  2606, 822,
-                                                                 6403, 239,  442,  6769, 2560, 2502, 5072,  7268, 341};
+constexpr std::array<unsigned, NB_SVID_MAX> TRUNCATION_POINT_DATA = {699,  694,  7318, 2127, 715,  6682, 7850, 5495,
+                                                                     1162, 7682, 6792, 9973, 6596, 2092, 19,   10151,
+                                                                     6297, 5766, 2359, 7136, 1706, 2128, 6827, 693,
+                                                                     9729, 1620, 6805, 534,  712,  1929, 5355, 6139,
+                                                                     6339, 1470, 6867, 7851, 1162, 7659, 1156, 2672,
+                                                                     6043, 2862, 180,  2663, 6940, 1645, 1582, 951,
+                                                                     6878, 7701, 1823, 2391, 2606, 822,  6403, 239,
+                                                                     442,  6769, 2560, 2502, 5072, 7268, 341};
 
 constexpr std::array<unsigned, NB_SVID_MAX> PHASE_DIFFERENCE_PRIMARY_CODE_PILOT = {
   796,  156,  4198, 3941, 1374, 1338, 1833, 2521, 3175, 168,  2715, 4408, 3160, 2796, 459,  3594,
@@ -437,58 +439,48 @@ constexpr uint8_t truncatedWeilCode(unsigned n, unsigned w, unsigned p, bool pri
   return weilCode(((n + p - 1) % N), w, primaryCode);
 }
 
-std::array<std::array<int8_t, PRIMARY_CODE_SIZE>, NB_SVID_MAX> makeB1CDataCodes()
+void fillB1CDataCodes(std::array<std::array<int8_t, PRIMARY_CODE_SIZE>, NB_SVID_MAX>& codes)
 {
-  std::array<std::array<int8_t, PRIMARY_CODE_SIZE>, NB_SVID_MAX> result;
-
   for (uint32_t svIdx = 0; svIdx < NB_SVID_MAX; ++svIdx)
   {
     for (unsigned primaryIdx = 0; primaryIdx < PRIMARY_CODE_SIZE; ++primaryIdx)
     {
-      result[svIdx][primaryIdx] =
+      codes[svIdx][primaryIdx] =
         (truncatedWeilCode(primaryIdx, PHASE_DIFFERENCE_DATA[svIdx], TRUNCATION_POINT_DATA[svIdx], true) ? -1 : 1);
     }
   }
-
-  return result;
 }
 
-std::array<std::array<int8_t, B1C_SECONDARY_CODE_SIZE>, NB_SVID_MAX> makeB1CPilotSecondaryCodes()
+void fillB1CPilotSecondaryCodes(std::array<std::array<int8_t, B1C_SECONDARY_CODE_SIZE>, NB_SVID_MAX>& codes)
 {
-  std::array<std::array<int8_t, B1C_SECONDARY_CODE_SIZE>, NB_SVID_MAX> result;
-
   for (uint32_t prnIdx = 0; prnIdx < NB_SVID_MAX; ++prnIdx)
   {
     for (unsigned secondaryIdx = 0; secondaryIdx < B1C_SECONDARY_CODE_SIZE; ++secondaryIdx)
     {
-      result[prnIdx][secondaryIdx] = (truncatedWeilCode(secondaryIdx,
-                                                        PHASE_DIFFERENCE_SECONDARY_CODE_PILOT[prnIdx],
-                                                        TRUNCATION_POINT_SECONDARY_CODE_PILOT[prnIdx],
-                                                        false)
-                                        ? -1
-                                        : 1);
+      codes[prnIdx][secondaryIdx] = (truncatedWeilCode(secondaryIdx,
+                                                       PHASE_DIFFERENCE_SECONDARY_CODE_PILOT[prnIdx],
+                                                       TRUNCATION_POINT_SECONDARY_CODE_PILOT[prnIdx],
+                                                       false)
+                                       ? -1
+                                       : 1);
     }
   }
-  return result;
 }
 
-std::array<std::array<int8_t, PRIMARY_CODE_SIZE>, NB_SVID_MAX> makeB1CPilotPrimaryCodes()
+void fillB1CPilotPrimaryCodes(std::array<std::array<int8_t, PRIMARY_CODE_SIZE>, NB_SVID_MAX>& codes)
 {
-  std::array<std::array<int8_t, PRIMARY_CODE_SIZE>, NB_SVID_MAX> result;
-
   for (uint32_t prnIdx = 0; prnIdx < NB_SVID_MAX; ++prnIdx)
   {
     for (unsigned primaryIdx = 0; primaryIdx < PRIMARY_CODE_SIZE; ++primaryIdx)
     {
-      result[prnIdx][primaryIdx] = (truncatedWeilCode(primaryIdx,
-                                                      PHASE_DIFFERENCE_PRIMARY_CODE_PILOT[prnIdx],
-                                                      TRUNCATION_POINT_PRIMARY_CODE_PILOT[prnIdx],
-                                                      true)
-                                      ? -1
-                                      : 1);
+      codes[prnIdx][primaryIdx] = (truncatedWeilCode(primaryIdx,
+                                                     PHASE_DIFFERENCE_PRIMARY_CODE_PILOT[prnIdx],
+                                                     TRUNCATION_POINT_PRIMARY_CODE_PILOT[prnIdx],
+                                                     true)
+                                     ? -1
+                                     : 1);
     }
   }
-  return result;
 }
 
 int64_t elapsedTimeToBeidouTime(int64_t elapsedTimeMs)
@@ -505,12 +497,13 @@ int64_t elapsedTimeToBeidouTime(int64_t elapsedTimeMs)
 
 struct CustomB1CDataCode::Pimpl
 {
-  const std::array<std::array<int8_t, PRIMARY_CODE_SIZE>, NB_SVID_MAX> dataCode {makeB1CDataCodes()};
+  std::array<std::array<int8_t, PRIMARY_CODE_SIZE>, NB_SVID_MAX> dataCode {};
   std::shared_ptr<CustomSignalNavMsgFromFile> navMsg;
 };
 
 CustomB1CDataCode::CustomB1CDataCode() : m(std::make_unique<Pimpl>())
 {
+  fillB1CDataCodes(m->dataCode);
 }
 
 void CustomB1CDataCode::setNavMessageGenerator(std::shared_ptr<CustomSignalNavMsgFromFile> gen)
@@ -548,12 +541,14 @@ void CustomB1CDataCode::getChips(int64_t elapsedTime, uint32_t prn, int8_t* chip
 
 struct CustomB1CPilotaCode::Pimpl
 {
-  const std::array<std::array<int8_t, PRIMARY_CODE_SIZE>, NB_SVID_MAX> primaryCodes {makeB1CPilotPrimaryCodes()};
-  const std::array<std::array<int8_t, B1C_SECONDARY_CODE_SIZE>, NB_SVID_MAX> secondaryCodes {makeB1CPilotSecondaryCodes()};
+  std::array<std::array<int8_t, PRIMARY_CODE_SIZE>, NB_SVID_MAX> primaryCodes {};
+  std::array<std::array<int8_t, B1C_SECONDARY_CODE_SIZE>, NB_SVID_MAX> secondaryCodes {};
 };
 
 CustomB1CPilotaCode::CustomB1CPilotaCode() : m(std::make_unique<Pimpl>())
 {
+  fillB1CPilotPrimaryCodes(m->primaryCodes);
+  fillB1CPilotSecondaryCodes(m->secondaryCodes);
 }
 
 CustomB1CPilotaCode::~CustomB1CPilotaCode()
@@ -573,7 +568,8 @@ uint32_t CustomB1CPilotaCode::getExtraAllocSize()
 void CustomB1CPilotaCode::getChips(int64_t elapsedTime, uint32_t prn, int8_t* chips)
 {
   const int64_t beidouTimeMs = elapsedTimeToBeidouTime(elapsedTime);
-  const int64_t primaryCodeOffset = (beidouTimeMs % PRIMARY_CODE_PERIOD_MS) * (PRIMARY_CODE_SIZE / PRIMARY_CODE_PERIOD_MS);
+  const int64_t primaryCodeOffset = (beidouTimeMs % PRIMARY_CODE_PERIOD_MS) *
+                                    (PRIMARY_CODE_SIZE / PRIMARY_CODE_PERIOD_MS);
   const int64_t secondaryCodeOffset = (beidouTimeMs % SECONDARY_CODE_PERIOD_MS) * B1C_SECONDARY_CODE_SIZE /
                                       SECONDARY_CODE_PERIOD_MS;
 
@@ -582,19 +578,21 @@ void CustomB1CPilotaCode::getChips(int64_t elapsedTime, uint32_t prn, int8_t* ch
     chips[chipIdx] =
       m->primaryCodes[prn - 1][primaryCodeOffset +
                                chipIdx * (PRIMARY_CODE_SIZE / PRIMARY_CODE_PERIOD_MS) / getNumberOfChipsPerMSec()] *
-      m->secondaryCodes[prn - 1][secondaryCodeOffset +
-                                 chipIdx * (B1C_SECONDARY_CODE_SIZE / SECONDARY_CODE_PERIOD_MS) / getNumberOfChipsPerMSec()];
+      m->secondaryCodes[prn - 1][secondaryCodeOffset + chipIdx * (B1C_SECONDARY_CODE_SIZE / SECONDARY_CODE_PERIOD_MS) /
+                                                         getNumberOfChipsPerMSec()];
   }
 }
 
 struct CustomB1CPilotbCode::Pimpl
 {
-  const std::array<std::array<int8_t, PRIMARY_CODE_SIZE>, NB_SVID_MAX> primaryCodes {makeB1CPilotPrimaryCodes()};
-  const std::array<std::array<int8_t, B1C_SECONDARY_CODE_SIZE>, NB_SVID_MAX> secondaryCodes {makeB1CPilotSecondaryCodes()};
+  std::array<std::array<int8_t, PRIMARY_CODE_SIZE>, NB_SVID_MAX> primaryCodes {};
+  std::array<std::array<int8_t, B1C_SECONDARY_CODE_SIZE>, NB_SVID_MAX> secondaryCodes {};
 };
 
 CustomB1CPilotbCode::CustomB1CPilotbCode() : m(std::make_unique<Pimpl>())
 {
+  fillB1CPilotPrimaryCodes(m->primaryCodes);
+  fillB1CPilotSecondaryCodes(m->secondaryCodes);
 }
 
 CustomB1CPilotbCode::~CustomB1CPilotbCode()
@@ -614,7 +612,8 @@ uint32_t CustomB1CPilotbCode::getExtraAllocSize()
 void CustomB1CPilotbCode::getChips(int64_t elapsedTime, uint32_t prn, int8_t* chips)
 {
   const int64_t beidouTimeMs = elapsedTimeToBeidouTime(elapsedTime);
-  const int64_t primaryCodeOffset = (beidouTimeMs % PRIMARY_CODE_PERIOD_MS) * (PRIMARY_CODE_SIZE / PRIMARY_CODE_PERIOD_MS);
+  const int64_t primaryCodeOffset = (beidouTimeMs % PRIMARY_CODE_PERIOD_MS) *
+                                    (PRIMARY_CODE_SIZE / PRIMARY_CODE_PERIOD_MS);
   const int64_t secondaryCodeOffset = (beidouTimeMs % SECONDARY_CODE_PERIOD_MS) * B1C_SECONDARY_CODE_SIZE /
                                       SECONDARY_CODE_PERIOD_MS;
 
@@ -623,7 +622,7 @@ void CustomB1CPilotbCode::getChips(int64_t elapsedTime, uint32_t prn, int8_t* ch
     chips[chipIdx] =
       m->primaryCodes[prn - 1][primaryCodeOffset +
                                chipIdx * (PRIMARY_CODE_SIZE / PRIMARY_CODE_PERIOD_MS) / getNumberOfChipsPerMSec()] *
-      m->secondaryCodes[prn - 1][secondaryCodeOffset +
-                                 chipIdx * (B1C_SECONDARY_CODE_SIZE / SECONDARY_CODE_PERIOD_MS) / getNumberOfChipsPerMSec()];
+      m->secondaryCodes[prn - 1][secondaryCodeOffset + chipIdx * (B1C_SECONDARY_CODE_SIZE / SECONDARY_CODE_PERIOD_MS) /
+                                                         getNumberOfChipsPerMSec()];
   }
 }

@@ -6,10 +6,10 @@
 #include "../common/custom_signal_nav_msg_from_file.h"
 #include "../custom_signal_interface.h"
 
-class CAData
+class QzssCAData
 {
 public:
-  CAData(const CSInitData& data);
+  QzssCAData(const CSInitData& data);
 
   const uint32_t startWeek;
   const uint32_t startSecondOfWeek;
@@ -18,43 +18,43 @@ public:
   CustomSignalNavMsgFromFile navMsg;
 };
 
-class CustomCANavMsg : public ICustomSignalNavMsg
+class CustomQzssCANavMsg : public ICustomSignalNavMsg
 {
 public:
-  CustomCANavMsg(CAData& data);
+  CustomQzssCANavMsg(QzssCAData& data);
 
   uint32_t getNavMsgDurationMs() override;
   int32_t getTOWOffset() override;
   void buildNavMsg(int64_t elapsedTime, uint32_t prn, const CSConstellation& data) override;
 
 private:
-  CAData& m_data;
+  QzssCAData& m_data;
 };
 
-class CustomCACode : public ICustomSignalCode
+class CustomQzssCACode : public ICustomSignalCode
 {
 public:
-  CustomCACode(CAData& data);
+  CustomQzssCACode(QzssCAData& data);
 
   void getChips(int64_t elapsedTime, uint32_t prn, int8_t* chips) override;
   uint32_t getNumberOfChipsPerMSec() override;
   uint32_t getExtraAllocSize() override;
 
 private:
-  CAData& m_data;
+  QzssCAData& m_data;
 };
 
-class CustomCA : public ICustomSignal
+class CustomQzssCA : public ICustomSignal
 {
 public:
-  CustomCA(const CSInitData& data);
-  ~CustomCA();
+  CustomQzssCA(const CSInitData& data);
+  ~CustomQzssCA();
 
   ICustomSignalNavMsg* getNavMsg() override;
   ICustomSignalCode* getCode(const char* name) override;
 
 private:
-  CAData m_data;
-  CustomCANavMsg m_msg;
-  CustomCACode m_code;
+  QzssCAData m_data;
+  CustomQzssCANavMsg m_msg;
+  CustomQzssCACode m_code;
 };
