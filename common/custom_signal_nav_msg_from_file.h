@@ -64,7 +64,9 @@ private:
 class CustomSignalNavMsgFromFile
 {
 public:
-  explicit CustomSignalNavMsgFromFile(const std::string& filename, std::unique_ptr<INavMessageBlock> navMsgBlock);
+  explicit CustomSignalNavMsgFromFile(const std::string& filename,
+                                      std::unique_ptr<INavMessageBlock> navMsgBlock,
+                                      size_t downlinkNavMessageIdx = 7);
 
   void prepare(int64_t elapsed, uint32_t prn);
   bool getBit(int64_t elapsed, uint32_t prn);
@@ -72,6 +74,7 @@ public:
 private:
   void parseBlock();
 
+  size_t m_downlinkNavMsgIdx;
   std::ifstream m_file;
   std::string m_lastLine;
   std::unique_ptr<INavMessageBlock> m_navMsgBlock;

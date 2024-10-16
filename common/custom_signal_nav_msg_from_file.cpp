@@ -7,7 +7,6 @@ namespace
 {
 constexpr int32_t DOWNLINK_ELAPSED_MS_INDEX = 0;
 constexpr int32_t DOWNLINK_PRN_INDEX = 2;
-constexpr int32_t DOWNLINK_NAVIGATION_MESSAGE_INDEX = 7;
 
 inline std::vector<std::string> split(const std::string& str, const std::string& delim)
 {
@@ -33,16 +32,20 @@ inline int64_t toInt64(const std::string& str)
   return sent;
 }
 
-inline bool parseLine(const std::string& line, int64_t& out_timestamp, int64_t& out_prn, std::string& out_bits)
+inline bool parseLine(const std::string& line,
+                      int64_t& out_timestamp,
+                      int64_t& out_prn,
+                      std::string& out_bits,
+                      size_t navMsgIdx)
 {
   std::vector<std::string> values = split(line, ",");
 
-  if (values.size() < DOWNLINK_NAVIGATION_MESSAGE_INDEX + 1)
+  if (values.size() < navMsgIdx + 1)
     return false;
 
   out_timestamp = toInt64(values[DOWNLINK_ELAPSED_MS_INDEX]);
   out_prn = toInt64(values[DOWNLINK_PRN_INDEX]);
-  out_bits = values[DOWNLINK_NAVIGATION_MESSAGE_INDEX];
+  out_bits = values[navMsgIdx];
 
   return true;
 }
@@ -59,8 +62,10 @@ std::string buildString(TArgs&&... args)
 } // namespace
 
 CustomSignalNavMsgFromFile::CustomSignalNavMsgFromFile(const std::string& filename,
-                                                       std::unique_ptr<INavMessageBlock> navMsgBlock) :
-  m_file(std::filesystem::u8path(filename)),
+                                                       std::unique_ptr<INavMessageBlock> navMsgBlock,
+                                                       size_t downlinkNavMessageIdx) :
+  m_downlinkNavMsgIdx(downlinkNavMessageIdx),
+  m_file(std::filesystem::path(filename)),
   m_navMsgBlock(std::move(navMsgBlock))
 {
   if (!m_file)
@@ -103,7 +108,7 @@ void CustomSignalNavMsgFromFile::parseBlock()
   int64_t prn;
   std::string bits;
 
-  if (!parseLine(m_lastLine, timestamp, prn, bits))
+  if (!parseLine(m_lastLine, timestamp, prn, bits, m_downlinkNavMsgIdx))
     return;
 
   firstTimestamp = timestamp;
@@ -115,6 +120,6 @@ void CustomSignalNavMsgFromFile::parseBlock()
       throw std::runtime_error(buildString("Invalid PRN ", prn, " in downlink file."));
 
     m_navMsgBlock->update(timestamp, static_cast<uint32_t>(prn), bits);
-  } while (std::getline(m_file, m_lastLine) && parseLine(m_lastLine, timestamp, prn, bits) &&
+  } while (std::getline(m_file, m_lastLine) && parseLine(m_lastLine, timestamp, prn, bits, m_downlinkNavMsgIdx) &&
            timestamp == firstTimestamp);
 }

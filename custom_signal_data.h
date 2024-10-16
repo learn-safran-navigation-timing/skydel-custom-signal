@@ -117,6 +117,34 @@ extern "C"
     std::uint8_t healthStatus;
   };
 
+  struct CSGlonassEphemeris
+  {
+    double t_lambda;     // reference time of almanac;
+    double tau_c;        // correction from GLONASS to UTC;
+    double tau_gps;      // correction to GPS time relative to GLONASS;
+    double tau_n;        // correction of satellite time relative to GLONASS
+    double lambda;       // longitude of first ascending node passage, in semi-cycles
+    double delta_i;      // correction to the mean value of inclination, in semi-cycles
+    double omega;        // argument of perigee, in semi-cycles
+    double e;            // eccentricity
+    double delta_t;      // correction of the mean value of Draconian period, in seconds
+    double delta_t_rate; // rate of change of Draconian period, in seconds/coil
+
+    double tauN;
+    double svRelativeFrequencyBias;
+    uint32_t messageFrameTime;
+    uint32_t age;         // Age of oper. information  (days)
+    double positionX;     // position (km)
+    double positionY;     // position (km)
+    double positionZ;     // position (km)
+    double velocityX;     // velocity (km/s)
+    double velocityY;     // velocity (km/s)
+    double velocityZ;     // velocity (km/s)
+    double accelerationX; // acceleration (km/s^2)
+    double accelerationY; // acceleration (km/s^2)
+    double accelerationZ; // acceleration (km/s^2)
+  };
+
   struct CSEphemeris
   {
     uint32_t prn;
@@ -160,6 +188,7 @@ extern "C"
     CSGpsEphemeris gpsEphemeris;
     CSGalileoEphemeris galileoEphemeris;
     CSBeiDouEphemeris beidouEphemeris;
+    CSGlonassEphemeris glonassEphemeris;
   };
 
   ///

@@ -1,5 +1,6 @@
 #include "custom_b1c_nav_message.h"
 
+#include <limits>
 #include <sstream>
 
 #include "common/custom_signal_nav_msg_from_file.h"
@@ -10,22 +11,21 @@ constexpr uint32_t NB_SVID_MAX = 63;
 constexpr uint32_t FIRST_PRN = 1;
 constexpr uint64_t MESSAGE_DURATION_MS = 18000;
 constexpr uint64_t BIT_COUNT = 1800;
+constexpr uint64_t DOWNLINK_NAV_MESSAGE_INDEX = 6;
 
 void setBits(std::array<bool, BIT_COUNT>& bits, const std::string& str)
 {
   std::istringstream iss(str);
   iss >> std::hex;
 
-  uint32_t word;
-  uint32_t i = 0;
-  while (iss >> word)
+  uint32_t word = 0;
+  constexpr auto nbBitsInWord = std::numeric_limits<decltype(word)>::digits;
+  for (size_t bitIdxOffset = 0; iss >> word; bitIdxOffset += nbBitsInWord)
   {
-    for (uint32_t j = 0; j < NB_SVID_MAX; ++j)
+    for (size_t bitIdx = 0; (bitIdx < nbBitsInWord) && (bitIdxOffset + bitIdx < bits.size()); ++bitIdx)
     {
-      if (i * NB_SVID_MAX + j < BIT_COUNT)
-        bits[i * NB_SVID_MAX + j] = (word & (1 << (NB_SVID_MAX - 1 - j))) != 0;
+      bits[bitIdxOffset + bitIdx] = (word & (1 << (nbBitsInWord - 1 - bitIdx)));
     }
-    ++i;
   }
 }
 
@@ -35,7 +35,8 @@ std::shared_ptr<CustomSignalNavMsgFromFile> CustomB1CNavMsg::makeSharedB1CNavMsg
 {
   return std::make_shared<CustomSignalNavMsgFromFile>(
     downlinkPath,
-    std::make_unique<NavMessageBlock<NB_SVID_MAX, FIRST_PRN, BIT_COUNT, MESSAGE_DURATION_MS>>(&setBits));
+    std::make_unique<NavMessageBlock<NB_SVID_MAX, FIRST_PRN, BIT_COUNT, MESSAGE_DURATION_MS>>(&setBits),
+    DOWNLINK_NAV_MESSAGE_INDEX);
 }
 
 struct CustomB1CNavMsg::Pimpl
